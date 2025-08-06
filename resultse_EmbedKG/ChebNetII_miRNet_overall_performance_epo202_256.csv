@@ -1,0 +1,2 @@
+Model Type,Total Time,Average Time per Epoch,Average CPU Usage (MB),Average GPU Usage (MB)
+ChebNetII,118.7429s,0.5878s,5832.50,73.77

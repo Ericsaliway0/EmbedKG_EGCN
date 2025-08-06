@@ -1,0 +1,12 @@
+Fold 1:
+Test AUC: 0.9714 ± 0.0014 | Test F1: 0.9236 ± 0.0020 | Test FocalLoss: 0.1477 ± 0.0007 | Test Accuracy: 0.9172 ± 0.0023 | Test Precision: 0.8580 ± 0.0032 | Test Recall: 1.0000 ± 0.0000 | Test Hits@10: 1.0000 | Test MAP: 0.9596 ± 0.0024
+
+Fold 2:
+Test AUC: 0.9647 ± 0.0015 | Test F1: 0.9073 ± 0.0020 | Test FocalLoss: 0.1505 ± 0.0008 | Test Accuracy: 0.8979 ± 0.0024 | Test Precision: 0.8304 ± 0.0035 | Test Recall: 1.0000 ± 0.0000 | Test Hits@10: 1.0000 | Test MAP: 0.9502 ± 0.0028
+
+Fold 1:
+Test AUC: 0.9016 ± 0.0027 | Test F1: 0.8627 ± 0.0021 | Test FocalLoss: 0.1756 ± 0.0007 | Test Accuracy: 0.8408 ± 0.0030 | Test Precision: 0.7585 ± 0.0034 | Test Recall: 1.0000 ± 0.0000 | Test Hits@10: 1.0000 | Test MAP: 0.8396 ± 0.0061
+
+Fold 2:
+Test AUC: 0.9394 ± 0.0022 | Test F1: 0.8826 ± 0.0022 | Test FocalLoss: 0.1616 ± 0.0008 | Test Accuracy: 0.8670 ± 0.0028 | Test Precision: 0.7899 ± 0.0034 | Test Recall: 1.0000 ± 0.0000 | Test Hits@10: 1.0000 | Test MAP: 0.8982 ± 0.0274
+

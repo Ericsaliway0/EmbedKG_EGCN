@@ -1,0 +1,6 @@
+Fold 1:
+Test AUC: 0.8806 ± 0.0058 | Test F1: 0.8792 ± 0.0041 | Test FocalLoss: 0.1697 ± 0.0014 | Test Accuracy: 0.8625 ± 0.0057 | Test Precision: 0.7844 ± 0.0065 | Test Recall: 1.0000 ± 0.0000 | Test Hits@10: 1.0000 | Test MAP: 0.8389 ± 0.0148
+
+Fold 2:
+Test AUC: 0.9551 ± 0.0028 | Test F1: 0.8772 ± 0.0041 | Test FocalLoss: 0.1883 ± 0.0015 | Test Accuracy: 0.8600 ± 0.0055 | Test Precision: 0.7812 ± 0.0065 | Test Recall: 1.0000 ± 0.0000 | Test Hits@10: 1.0000 | Test MAP: 0.9581 ± 0.0027
+
