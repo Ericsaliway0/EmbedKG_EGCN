@@ -54,6 +54,9 @@ The dataset is obtained from the following sources:
 6. Download the data from the built gene association graph using the link below and place it in the `data/multiomics_meth/` directory before training:
    - [Download Gene Association Data](https://drive.google.com/file/d/1l7mbTn2Nxsbc7LLLJzsT8y02scD23aWo/view?usp=sharing)
 
-7. To train the model, run the following command:
-   - `python main.py --model_type ACGNN --net_type CPDB --score_threshold 0.99 --learning_rate 0.001 --num_epochs 200`
+7. For cancer dirver prediction, run the following command:
+   - `python main.py --model_type ChebNetII --net_type CPDB --score_threshold 0.99 --in_feats 2048 --hidden_feats 128 --learning_rate 0.001 --num_epochs 200`
+
+8. For miRNA-Cancer Association Predictions, run the following command:
+   - `python main.py --in-feats 256 --out-feats 256 --num-heads 2 --num-layers 2 --lr 0.01 --input-size 256 --hidden-size 16 --feat-drop 0.5 --attn-drop 0.5 --epochs 201 --model_type ChebNetII --net_type TarBase`
 
