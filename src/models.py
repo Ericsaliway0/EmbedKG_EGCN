@@ -15,109 +15,35 @@ from dgl.nn.pytorch.conv import ChebConv
 import math
 from torch.nn import Parameter
 
-def cheby(i,x):
-    if i==0:
-        return 1
-    elif i==1:
-        return x
-    else:
-        T0=1
-        T1=x
-        for ii in range(2,i+1):
-            T2=2*x*T1-T0
-            T0,T1=T1,T2
-        return T2
-
 class ChebNetII(nn.Module):
-    def __init__(self, in_feats, hidden_feats, out_feats, k=3, dropout=0.5,
-                 device=torch.device('cuda' if torch.cuda.is_available() else 'cpu')):
-        """
-        ChebNetII: Adaptive Chebyshev Network with learnable coefficients and MLP head.
-
-        Parameters:
-        - in_feats: Dimension of input features
-        - hidden_feats: Dimension of hidden features
-        - out_feats: Number of output classes
-        - k: Chebyshev polynomial order (K)
-        - dropout: Dropout rate for regularization
-        - device: Device to run the model on ('cpu' or 'cuda')
-        """
+    def __init__(self, in_feats, hidden_feats=64, K=3):
         super(ChebNetII, self).__init__()
-        self.k = k
-        self.dropout = dropout
-        self.device = device
+        self.K = K
+        self.coeffs = nn.Parameter(torch.ones(K+1))
+        self.linear = nn.Linear(in_feats, 1)  # binary classification
 
-        # Learnable Chebyshev coefficients
-        self.temp = Parameter(torch.Tensor(k + 1))
-        self.reset_parameters()
+    def forward(self, g, x):
+        with g.local_scope():
+            g = dgl.remove_self_loop(g)
+            g = dgl.add_self_loop(g)
 
-        # MLP head
-        self.mlp = nn.Sequential(
-            nn.Linear(in_feats, hidden_feats),
-            nn.ReLU(),
-            nn.Dropout(dropout),
-            nn.Linear(hidden_feats, hidden_feats),
-            nn.ReLU(),
-            nn.Dropout(dropout),
-            nn.Linear(hidden_feats, out_feats)
-        ).to(device)
+            degs = g.in_degrees().float().clamp(min=1)
+            norm = torch.pow(degs, -0.5).to(x.device).unsqueeze(1)
+            g.ndata['h'] = x * norm
+            g.update_all(fn.copy_u('h', 'm'), fn.sum('m', 'h'))
+            Ax = g.ndata['h'] * norm
 
-        # Batch Normalization
-        self.norm = nn.BatchNorm1d(hidden_feats).to(device)
+            Tx = [x, Ax]
+            for k in range(2, self.K + 1):
+                Tk = 2 * Ax - Tx[-2]
+                Tx.append(Tk)
+                Ax = Tk
 
-        # Dropout Layer
-        self.dropout_layer = nn.Dropout(dropout)
+            alpha = F.softmax(self.coeffs, dim=0)
+            out = sum(alpha[k] * Tx[k] for k in range(self.K + 1))
 
-    def reset_parameters(self):
-        """
-        Initialize Chebyshev coefficient parameters.
-        """
-        self.temp.data.fill_(1.0)
-
-    def compute_adaptive_coefficients(self):
-        """
-        Compute adaptive Chebyshev coefficients using self.temp.
-        Returns a tensor of size (k + 1,) on the specified device.
-        """
-        coe_tmp = F.relu(self.temp)
-        coe = coe_tmp.clone()
-
-        for i in range(self.k + 1):
-            coe[i] = coe_tmp[0] * cheby(i, math.cos((self.k + 0.5) * math.pi / (self.k + 1)))
-            for j in range(1, self.k + 1):
-                x_j = math.cos((self.k - j + 0.5) * math.pi / (self.k + 1))
-                coe[i] += coe_tmp[j] * cheby(i, x_j)
-            coe[i] = 2 * coe[i] / (self.k + 1)
-
-        coe[0] = coe[0] / 2  # Scale the first coefficient
-        return coe.to(self.device)
-
-    def forward(self, x_list, st=0, end=None):
-        """
-        Forward pass for ChebNetII.
-
-        Parameters:
-        - x_list: List of tensors [Tx_0, Tx_1, ..., Tx_K], each of shape (N, F)
-        - st, end: Optional start/end indices for subsetting input (e.g., minibatching)
-
-        Returns:
-        - Log-softmax predictions of shape (N, C)
-        """
-        if end is None:
-            end = x_list[0].size(0)
-
-        # Compute Chebyshev coefficients
-        coe = self.compute_adaptive_coefficients()
-
-        # Weighted combination of Chebyshev basis features
-        out = coe[0] * x_list[0][st:end, :].to(self.device)
-        for k in range(1, self.k + 1):
-            out += coe[k] * x_list[k][st:end, :].to(self.device)
-
-        # Apply MLP head with normalization and dropout
-        out = self.norm(out)
-        out = self.dropout_layer(out)
-        return F.log_softmax(self.mlp(out), dim=1)
+            logits = self.linear(out).squeeze(-1)  # (N,)
+            return logits
 
 class ACGNN_lamda_added(nn.Module):
     def __init__(self, in_feats, hidden_feats, out_feats, k=3, dropout=0.3, epsilon=1e-4):
@@ -303,7 +229,7 @@ class ACGNN(nn.Module):
 
         return self.mlp(x)
 
-class EGCN(nn.Module):
+class EGCN_default(nn.Module):
     def __init__(self, in_feats, hidden_feats, out_feats, k=3, dropout=0.3, epsilon=1e-4):
         """
         Efficient Graph Convolutional Network (EGCN) with:
@@ -359,6 +285,93 @@ class EGCN(nn.Module):
         x_res = x
         x = F.relu(self.cheb3(graph, x, lambda_max=lambda_max))
         x = self.dropout_layer(x) + x_res
+
+        return self.mlp(x)
+
+class EGCN(nn.Module):
+    def __init__(self, in_feats, hidden_feats, out_feats, k=3, dropout=0.3, epsilon=1e-4):
+        """
+        Efficient Graph Convolutional Network (EGCN)
+
+        Args:
+            in_feats (int): Input feature dimension
+            hidden_feats (int): Hidden layer dimension
+            out_feats (int): Output dimension
+            k (int): Maximum Chebyshev order
+            dropout (float): Dropout rate
+            epsilon (float): Early stopping tolerance
+        """
+        super(EGCN, self).__init__()
+
+        self.k = k
+        self.dropout = dropout
+        self.epsilon = epsilon
+
+        # Chebyshev convolutional layers
+        self.cheb1 = ChebConv(in_feats, hidden_feats, k)
+        self.cheb2 = ChebConv(hidden_feats, hidden_feats, k)
+        self.cheb3 = ChebConv(hidden_feats, hidden_feats, k)
+
+        # Batch normalization
+        self.norm = nn.BatchNorm1d(hidden_feats)
+
+        # Dropout
+        self.dropout_layer = nn.Dropout(dropout)
+
+        # Final MLP
+        self.mlp = nn.Sequential(
+            nn.Linear(hidden_feats, hidden_feats),
+            nn.ReLU(),
+            nn.Linear(hidden_feats, out_feats)
+        )
+
+        self.reset_parameters()
+
+    def reset_parameters(self):
+        """
+        Initializes weights using Kaiming initialization for linear layers.
+        """
+        for m in self.modules():
+            if isinstance(m, nn.Linear):
+                nn.init.kaiming_normal_(m.weight)
+                if m.bias is not None:
+                    nn.init.zeros_(m.bias)
+            elif isinstance(m, nn.BatchNorm1d):
+                nn.init.ones_(m.weight)
+                nn.init.zeros_(m.bias)
+
+    def forward(self, graph, features, lambda_max=None):
+        """
+        Forward pass for EGCN.
+
+        Args:
+            graph (dgl.DGLGraph): Input graph
+            features (Tensor): Node features
+            lambda_max (Tensor or float, optional): Largest eigenvalue of Laplacian
+
+        Returns:
+            Tensor: Output of MLP layer
+        """
+        if lambda_max is None:
+            with graph.local_scope():
+                lambda_max = dgl.laplacian_lambda_max(graph)
+
+        x = F.relu(self.cheb1(graph, features, lambda_max=lambda_max))
+        x = self.norm(x)
+
+        # Adaptive Chebyshev aggregation with early stopping
+        prev_x = x.clone()
+        for _ in range(1, self.k):
+            x_new = F.relu(self.cheb2(graph, x, lambda_max=lambda_max))
+            if torch.norm(x_new - prev_x) < self.epsilon:
+                break
+            prev_x = x_new.clone()
+            x = x_new
+
+        # Third aggregation term
+        x_res = x
+        x = F.relu(self.cheb3(graph, x, lambda_max=lambda_max))
+        x = self.dropout_layer(x) + x_res  # Residual connection
 
         return self.mlp(x)
 

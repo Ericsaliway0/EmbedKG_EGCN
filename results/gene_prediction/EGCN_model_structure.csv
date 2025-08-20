@@ -1,0 +1,2 @@
+Method,Number of Layers,Input Layer Nodes,Hidden Layer Nodes,Attention Layer Nodes,Output Layer Nodes,Total Parameters,Residual Connection
+EGCN,6,2048,128,N/A,1,902017,No

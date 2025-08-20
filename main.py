@@ -22,7 +22,7 @@ if __name__ == "__main__":
     plot_and_analyze(args)
     
     ## replace "PAN" with "BRCA", _PAN with _BRCA to do survival analysis
-
+## (kg39) ericsali@erics-MBP-4 EGCN % python main.py --model_type EGCN --net_type CPDB --score_threshold 0.99 --in_feats 2048 --hidden_feats 128 --out_feats 1 --learning_rate 0.001 --num_epochs 30
 ## (kg39) ericsali@erics-MBP-4 ACGNN % python main.py --model_type GIN --net_type CPDB --score_threshold 0.99 --in_feats 2048 --hidden_feats 128 --out_feats 1 --learning_rate 0.001 --num_epochs 300
 ## (kg39) ericsali@erics-MBP-4 ACGNN % python main.py --model_type GIN --net_type CPDB --score_threshold 0.95 --in_feats 2048 --hidden_feats 128 --out_feats 1 --learning_rate 0.001 --num_epochs 199
 ## (kg39) ericsali@erics-MacBook-Pro-4 ACGNN % python main.py --model_type ACGNN --net_type CPDB --score_threshold 0.99 --in_feats 2048 --hidden_feats 2048 --out_feats 1 --learning_rate 0.001 --num_epochs 99

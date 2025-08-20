@@ -92,6 +92,47 @@ def choose_model(model_type, in_feats, hidden_feats, out_feats):
     else:
         raise ValueError("Invalid model type. Choose from ['GraphSAGE', 'GAT', 'EMOGI', 'HGDC', 'MTGCN', 'GCN', 'GIN', 'ChebNet', 'ChebNetII', 'EGCN'].")
 
+def choose_model(model_type, in_feats, hidden_feats, out_feats):
+    if model_type == 'GraphSAGE':
+        return GraphSAGE(in_feats, hidden_feats, out_feats)
+    elif model_type == 'GAT':
+        return GAT(in_feats, hidden_feats, out_feats, num_heads=1)
+    elif model_type == 'GCN':
+        return GCN(in_feats, hidden_feats, out_feats)
+    elif model_type == 'GIN':
+        return GIN(in_feats, hidden_feats, out_feats)
+    elif model_type == 'HGDC':
+        return HGDC(in_feats, hidden_feats, out_feats, num_heads=1)
+    elif model_type == 'EMOGI':
+        return EMOGI(in_feats, hidden_feats, out_feats, num_heads=1)
+    elif model_type == 'MTGCN':
+        return MTGCN(in_feats, hidden_feats, out_feats)
+    elif model_type == 'ChebNet':
+        return ChebNet(in_feats, hidden_feats, out_feats)
+    elif model_type == 'ChebNetII':
+        return ChebNetII(
+            in_feats,
+            hidden_feats,
+            out_feats
+        )
+    elif model_type == 'EGCN':
+        return EGCN(in_feats, hidden_feats, out_feats)
+    elif model_type == 'DMGNN':
+        return DMGNN(
+            in_feat_dim=in_feats,
+            hidden_dim=hidden_feats,
+            out_dim=out_feats,
+            heads=4,
+            dropout=0.5
+        )
+    else:
+        raise ValueError(
+            "Invalid model type. Choose from ['GraphSAGE', 'GAT', 'HGDC', 'EMOGI', "
+            "'MTGCN', 'GCN', 'GIN', 'ChebNet', 'ChebNetII', 'EGCN', 'DMGNN']."
+        ) 
+        
+        # ValueError("Invalid model type. Choose from ['GraphSAGE', 'GAT', 'EMOGI', 'HGDC', 'MTGCN', 'GCN', 'GIN', 'Chebnet', 'ACGNN'].")
+
 def save_and_plot_results_no_error_bar_pass(predicted_above, predicted_below, degrees_above, degrees_below, avg_above, avg_below, args):
 
     # Save predictions and degrees
