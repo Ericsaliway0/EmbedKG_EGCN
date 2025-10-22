@@ -3,11 +3,7 @@ This repository provides the code for our research project "Graph Neural Network
 
 This repository contains the code for our project,  
 **"Graph Neural Network with Knowledge Graph Embeddings for Cancer Driver and miRNA Regulator Discovery,"**  
-submitted to the **16th ACM Conference on Bioinformatics, Computational Biology, and Health Informatics (ACM-BCB 2025)**,  
-which will take place **October 11-15, 2025, in USA at Philadelphia**.  
 
-You can learn more about the conference here:  
-[ACM-BCB 2025](https://acm-bcb.org/index.php)
 
 ![Alt text](images/kg_framework.png)
 
