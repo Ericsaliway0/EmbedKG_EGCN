@@ -1,9 +1,6 @@
 # EmbedKG: Graph Neural Network with Knowledge Graph Embeddings for Cancer Driver and miRNA Regulator Discovery
-This repository provides the code for our research project "Graph Neural Network with Knowledge Graph Embeddings for Cancer Driver and miRNA Regulator Discovery".
 
-This repository contains the code for our project,  
-**"Graph Neural Network with Knowledge Graph Embeddings for Cancer Driver and miRNA Regulator Discovery,"**  
-
+This repository provides the implementation and source code for our research project, "Graph Neural Network with Knowledge Graph Embeddings for Cancer Driver and miRNA Regulator Discovery."
 
 ![Alt text](images/kg_framework.png)
 
