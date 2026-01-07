@@ -1,6 +1,9 @@
-# EmbedKG: Graph Neural Network with Knowledge Graph Embeddings for Cancer Driver and miRNA Regulator Discovery
+This repository contains the source code for our paper  
+**“EmbedKG: Graph Neural Network with Knowledge Graph Embeddings for Cancer Driver and miRNA Regulator Discovery,”**  
+published in the Proceedings of the **16th ACM International Conference on Bioinformatics, Computational Biology, and Health Informatics (ACM-BCB 2025)**,  
+held **October 12–15, 2025, in Philadelphia, Pennsylvania, USA**.  
+DOI: https://doi.org/10.1145/3765612.3767778
 
-This repository provides the implementation and source code for our research project, "Graph Neural Network with Knowledge Graph Embeddings for Cancer Driver and miRNA Regulator Discovery."
 
 ![Alt text](images/kg_framework.png)
 
