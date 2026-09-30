@@ -47,8 +47,9 @@ The dataset is obtained from the following sources:
 5. Install DGL:
    - `conda install -c dglteam dgl`
 
-6. Download the data from the built gene association graph using the link below and place it in the `data/multiomics_meth/` directory before training:
+6. Download the data from the built gene association graph using the link below and place then in the `embedding/data/` directory and `embedding/multiomics_meth/` directory respectively:
    - [Download Gene Association Data](https://drive.google.com/file/d/1l7mbTn2Nxsbc7LLLJzsT8y02scD23aWo/view?usp=sharing)
+   - [Download miRNA-Cancer Association Graph](https://drive.google.com/file/d/11gjC7qUqxbgXVBdjY1K0y-rfW9H8UgdT/view?usp=drive_link)
 
 7. For cancer dirver prediction, run the following command:
    - `python main.py --model_type ChebNetII --net_type CPDB --score_threshold 0.99 --in_feats 2048 --hidden_feats 128 --learning_rate 0.001 --num_epochs 200`
